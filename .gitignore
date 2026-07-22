@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.env
+*.log
+*.err
+*.txt
+*.db
+*.db-wal
+*.db-shm
+.vscode/
+.idea/
+*.sw?
+*.suo
+.DS_Store
+Thumbs.db
