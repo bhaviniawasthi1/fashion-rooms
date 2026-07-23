@@ -65,6 +65,7 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
+            <img src="/favicon.png" alt="Fashion Rooms" className="w-8 h-8 object-contain" />
             <span className="text-xl font-bold tracking-tight">
               <span className="text-pink-600">Fashion</span>
               <span className="text-gray-900"> Rooms</span>
