@@ -90,46 +90,32 @@ A unified orders page that aggregates both personal and room purchases, with rew
 
 ---
 
-## 📸 Screenshots
-
-> *Add screenshots of your application here demonstrating key flows.*
-
-| Landing Page | Room Chat | Room Cart |
-|:---:|:---:|:---:|
-| ![Landing](https://via.placeholder.com/300x600?text=Screenshot) | ![Chat](https://via.placeholder.com/300x600?text=Screenshot) | ![Cart](https://via.placeholder.com/300x600?text=Screenshot) |
-
-| Product Discovery | MynCoins Dashboard | Orders |
-|:---:|:---:|:---:|
-| ![Products](https://via.placeholder.com/300x600?text=Screenshot) | ![Coins](https://via.placeholder.com/300x600?text=Screenshot) | ![Orders](https://via.placeholder.com/300x600?text=Screenshot) |
-
----
-
 ## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                    Client (Vite)                      │
-│  React 19 · TypeScript 7 · Tailwind CSS 4 · Router 7 │
+│                    Client (Vite)                    │
+│ React 19 · TypeScript 7 · Tailwind CSS 4 · Router 7 │
 │  ┌──────────┐ ┌──────────┐ ┌──────────────────────┐ │
-│  │  Pages   │ │Components│ │  Context Providers    │ │
-│  │          │ │          │ │ (Auth, Socket, Chat)  │ │
+│  │  Pages   │ │Components│ │  Context Providers   │ │
+│  │          │ │          │ │ (Auth, Socket, Chat) │ │
 │  └────┬─────┘ └────┬─────┘ └──────────┬───────────┘ │
-│       └────────────┴──────────────────┘              │
-│                        │ HTTP / WebSocket             │
+│       └────────────┴──────────────────┘             │
+│                        │ HTTP / WebSocket           │
 └────────────────────────┼────────────────────────────┘
                          │
 ┌────────────────────────┼────────────────────────────┐
-│               Server (Express 5)                     │
+│               Server (Express 5)                    │
 │  ┌──────────┐ ┌──────────┐ ┌──────────────────────┐ │
-│  │  Routes  │ │ Services │ │  Socket.IO Handlers   │ │
+│  │  Routes  │ │ Services │ │  Socket.IO Handlers  │ │
 │  │  (REST)  │ │ (Logic)  │ │ (Presence, Chat, AI) │ │
 │  └────┬─────┘ └────┬─────┘ └──────────┬───────────┘ │
-│       └────────────┴──────────────────┘              │
-│                        │                             │
-│              ┌─────────┴─────────┐                   │
-│              │   better-sqlite3  │                   │
-│              │   (SQLite)        │                   │
-│              └───────────────────┘                   │
+│       └────────────┴──────────────────┘             │
+│                        │                            │
+│              ┌─────────┴─────────┐                  │
+│              │   better-sqlite3  │                  │
+│              │   (SQLite)        │                  │
+│              └───────────────────┘                  │
 └─────────────────────────────────────────────────────┘
 ```
 
