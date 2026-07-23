@@ -66,7 +66,7 @@ export default function Home() {
       tag: '🏆 Hackathon Edge',
       title: 'Vote & Earn',
       subtitle: 'Gamified Group Shopping',
-      description: 'Vote on products as a room, build a shared cart with dupe detection, and earn MynCoins when your group purchases together. Collaborative commerce reimagined.',
+      description: 'Vote on products as a room, build a room cart with dupe detection, and earn MynCoins when your group purchases together. Collaborative commerce reimagined.',
       cta: 'Explore Products',
       ctaLink: '/products',
       color: 'from-rose-600 to-pink-700',

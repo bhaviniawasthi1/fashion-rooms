@@ -29,9 +29,9 @@ router.post('/', authenticateToken, (req: AuthRequest, res: Response) => {
     return;
   }
 
-  const validMaxMembers = [2, 5, 10, 15];
+  const validMaxMembers = [3, 5, 8, 10];
   if (!validMaxMembers.includes(max_members)) {
-    res.status(400).json({ error: 'Max members must be 2, 5, 10, or 15' });
+    res.status(400).json({ error: 'Max members must be 3, 5, 8, or 10' });
     return;
   }
 

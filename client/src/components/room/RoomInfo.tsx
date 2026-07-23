@@ -58,7 +58,7 @@ export default function RoomInfo({ room, onRoomUpdated: _onRoomUpdated }: RoomIn
         <span className="text-2xl">{occasionEmojis[room.occasion] || ''}</span>
         <div>
           <h2 className="font-bold text-gray-900 text-lg">{room.name}</h2>
-          <p className="text-xs text-gray-600">{room.occasion} · {room.member_count} members</p>
+          <p className="text-xs text-gray-600">{room.occasion} · {room.member_count} member{room.member_count !== 1 ? 's' : ''}</p>
         </div>
       </div>
 
@@ -75,7 +75,7 @@ export default function RoomInfo({ room, onRoomUpdated: _onRoomUpdated }: RoomIn
         </div>
         <div className="bg-gray-50 rounded-lg p-2.5">
           <span className="text-gray-400 block">Capacity</span>
-          <span className="font-semibold text-gray-600">{room.member_count}/{room.max_members}</span>
+          <span className="font-semibold text-gray-600">{room.member_count} member{room.member_count !== 1 ? 's' : ''}</span>
         </div>
         <div className="bg-gray-50 rounded-lg p-2.5">
           <span className="text-gray-400 block">Created</span>

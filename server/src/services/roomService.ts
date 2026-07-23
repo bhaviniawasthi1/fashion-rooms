@@ -1,13 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import db from '../db/index.js';
 import type { Room, RoomWithMeta, CreateRoomInput } from '../types/index.js';
-import { generateInviteCode, buildInviteLink } from '../utils/inviteCode.js';
+import { generateInviteCode } from '../utils/inviteCode.js';
 import { addMember, getRoomMemberCount, getRoomMembers } from './memberService.js';
 import { recordActivity } from './activityService.js';
 
 export function createRoom(input: CreateRoomInput, userId: string, userName: string): {
   room: RoomWithMeta;
-  invite_link: string;
 } {
   const id = uuidv4();
   const inviteCode = generateInviteCode();
@@ -40,7 +39,6 @@ export function createRoom(input: CreateRoomInput, userId: string, userName: str
       owner_name: userName,
       is_owner: true,
     },
-    invite_link: buildInviteLink(inviteCode),
   };
 }
 
@@ -119,7 +117,7 @@ export function getRoomByInviteCode(code: string): Room | null {
   };
 }
 
-export function joinRoomByCode(code: string, userId: string): { room: RoomWithMeta; invite_link: string } | { error: string } {
+export function joinRoomByCode(code: string, userId: string): { room: RoomWithMeta } | { error: string } {
   const room = getRoomByInviteCode(code);
   if (!room) return { error: 'Invalid invite code' };
 
@@ -148,10 +146,7 @@ export function joinRoomByCode(code: string, userId: string): { room: RoomWithMe
 
   const fullRoom = getRoomById(room.id, userId)!;
 
-  return {
-    room: fullRoom,
-    invite_link: buildInviteLink(code),
-  };
+  return { room: fullRoom };
 }
 
 export function isRoomMember(roomId: string, userId: string): boolean {

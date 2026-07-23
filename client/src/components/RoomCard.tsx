@@ -63,7 +63,7 @@ export default function RoomCard({ room, onInvite }: RoomCardProps) {
       <div className="p-4 space-y-3">
         <div onClick={handleClick} className="flex items-center justify-between text-sm">
           <span className="text-gray-600">
-            <span className="font-semibold text-gray-900">{room.member_count}</span> / {room.max_members} members
+            <span className="font-semibold text-gray-900">{room.member_count}</span> member{room.member_count !== 1 ? 's' : ''}
           </span>
           <span className="text-gray-600">
             by <span className="font-medium text-gray-600">{room.owner_name}</span>

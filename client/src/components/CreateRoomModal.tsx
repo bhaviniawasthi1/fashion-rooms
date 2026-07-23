@@ -31,7 +31,7 @@ export default function CreateRoomModal({ isOpen, onClose, onCreated }: CreateRo
         max_members: maxMembers,
         duration_days: durationDays,
       });
-      onCreated(res.data.room, res.data.invite_link);
+      onCreated(res.data.room, `${window.location.origin}/join?code=${res.data.room.invite_code}`);
       setName('');
       setOccasion(OCCASIONS[0]);
       setMaxMembers(5);

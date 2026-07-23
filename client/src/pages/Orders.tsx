@@ -40,7 +40,7 @@ export default function Orders() {
       <div className="min-h-[60vh] flex flex-col items-center justify-center text-gray-400 px-4">
         <span className="text-5xl block mb-3">🛍️</span>
         <p className="text-sm mb-1">No orders yet.</p>
-        <p className="text-xs text-gray-400 mb-4">Purchases made from shared carts will appear here.</p>
+        <p className="text-xs text-gray-400 mb-4">All your room and personal purchases will appear here.</p>
         <Link to="/rooms" className="bg-pink-500 text-white px-6 py-2 rounded-lg text-sm font-semibold hover:bg-pink-600 transition-colors">Browse Rooms</Link>
       </div>
     );

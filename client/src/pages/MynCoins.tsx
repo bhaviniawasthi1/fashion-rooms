@@ -64,7 +64,7 @@ export default function MynCoins() {
         <div className="space-y-3 text-sm text-gray-600">
           <div className="flex gap-3">
             <span className="w-6 h-6 rounded-full bg-pink-100 text-pink-600 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
-            <span>Join a Fashion Room and add products to the shared cart.</span>
+            <span>Join a Fashion Room and add products to the room cart.</span>
           </div>
           <div className="flex gap-3">
             <span className="w-6 h-6 rounded-full bg-pink-100 text-pink-600 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
