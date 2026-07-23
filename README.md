@@ -36,7 +36,6 @@
 - [Problem](#-problem)
 - [Solution](#-solution)
 - [Key Features](#-key-features)
-- [Screenshots](#-screenshots)
 - [Architecture](#-architecture)
 - [Tech Stack](#-tech-stack)
 - [Getting Started](#-getting-started)
