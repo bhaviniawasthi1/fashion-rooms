@@ -20,7 +20,7 @@ import type { Room } from '../types';
 
 export default function RoomDetail() {
   const { id } = useParams<{ id: string }>();
-  const { user } = useAuth();
+  useAuth();
   const navigate = useNavigate();
   const { connected } = useSocket();
   const [room, setRoom] = useState<Room | null>(null);

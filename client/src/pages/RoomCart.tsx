@@ -55,7 +55,7 @@ export default function RoomCart() {
   const [room, setRoom] = useState<Room | null>(null);
   const [items, setItems] = useState<SharedCartItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [checkoutStatus, setCheckoutStatus] = useState<CheckoutStatus | null>(null);
+  const [, setCheckoutStatus] = useState<CheckoutStatus | null>(null);
   const [purchasing, setPurchasing] = useState(false);
   const [selections, setSelections] = useState<Record<string, ItemSelection>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});

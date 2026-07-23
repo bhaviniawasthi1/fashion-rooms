@@ -43,7 +43,6 @@ function FloatingChatBubble() {
 
 function AppContent() {
   const { loading, user } = useAuth();
-  const navigate = useNavigate();
 
   if (loading) {
     return (
