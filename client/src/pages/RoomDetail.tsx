@@ -18,6 +18,21 @@ import { ChatMessageSkeleton } from '../components/Skeleton';
 import { useChatContext } from '../context/ChatContext';
 import type { Room } from '../types';
 
+const occasionStyles: Record<string, { bg: string }> = {
+  Wedding:    { bg: 'bg-[#fce4ec]' },
+  Trip:       { bg: 'bg-[#e3f2fd]' },
+  Party:      { bg: 'bg-[#f3e5f5]' },
+  College:    { bg: 'bg-[#fff3e0]' },
+  Office:     { bg: 'bg-[#eceff1]' },
+  Festival:   { bg: 'bg-[#e8f5e9]' },
+  Birthday:   { bg: 'bg-[#fff8e1]' },
+  Casual:     { bg: 'bg-[#e0f2f1]' },
+  Date:       { bg: 'bg-[#fce4ec]' },
+  Vacation:   { bg: 'bg-[#e8eaf6]' },
+};
+
+const CHAT_PATTERN = `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`;
+
 export default function RoomDetail() {
   const { id } = useParams<{ id: string }>();
   useAuth();
@@ -159,33 +174,40 @@ export default function RoomDetail() {
             </div>
           </div>
         ) : (
-          <div className="flex-1 flex flex-col min-w-0">
-            <div className="flex-1 overflow-y-auto px-3 py-3 space-y-1">
-              {messagesLoading ? (
-                <div className="space-y-4 pt-4">
-                  {[1, 2, 3, 4].map((i) => <ChatMessageSkeleton key={i} />)}
-                </div>
-              ) : messages.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                  <span className="text-4xl mb-2">💬</span>
-                  <p className="text-sm font-medium">No messages yet</p>
-                  <p className="text-xs text-gray-400 mt-1 text-center max-w-xs">
-                    Start the conversation! Try <span className="text-pink-500 font-medium">@Maya</span> for AI fashion assistance.
-                  </p>
-                </div>
-              ) : (
-                messages.map((msg) =>
-                  msg.type === 'system' ? (
-                    <SystemMessage key={msg.id} message={msg} />
-                  ) : (
-                    <MessageBubble key={msg.id} message={msg} />
+          <div className={`flex-1 flex flex-col min-w-0 ${occasionStyles[room.occasion]?.bg || 'bg-gray-50'}`}>
+            <div
+              className="flex-1 overflow-y-auto px-3 py-3"
+              style={{ backgroundImage: CHAT_PATTERN }}
+            >
+              <div className="max-w-2xl mx-auto space-y-1">
+                {messagesLoading ? (
+                  <div className="space-y-4 pt-4">
+                    {[1, 2, 3, 4].map((i) => <ChatMessageSkeleton key={i} />)}
+                  </div>
+                ) : messages.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                    <span className="text-4xl mb-2">💬</span>
+                    <p className="text-sm font-medium">No messages yet</p>
+                    <p className="text-xs text-gray-400 mt-1 text-center max-w-xs">
+                      Start the conversation! Try <span className="text-pink-500 font-medium">@Maya</span> for AI fashion assistance.
+                    </p>
+                  </div>
+                ) : (
+                  messages.map((msg) =>
+                    msg.type === 'system' ? (
+                      <SystemMessage key={msg.id} message={msg} />
+                    ) : (
+                      <MessageBubble key={msg.id} message={msg} />
+                    )
                   )
-                )
-              )}
-              <TypingIndicator typingUsers={typingUsers} />
-              <div ref={messagesEndRef} />
+                )}
+                <TypingIndicator typingUsers={typingUsers} />
+                <div ref={messagesEndRef} />
+              </div>
             </div>
-            <MessageInput onSend={sendMessage} onTypingStart={startTyping} onTypingStop={stopTyping} />
+            <div className="max-w-2xl mx-auto">
+              <MessageInput onSend={sendMessage} onTypingStart={startTyping} onTypingStop={stopTyping} />
+            </div>
           </div>
         )}
 
