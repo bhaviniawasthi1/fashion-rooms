@@ -20,8 +20,8 @@ function renderContent(content: string) {
             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
           />
           <div>
-            <p className="text-xs font-medium leading-tight">{name}</p>
-            <p className="text-[10px] opacity-70 leading-tight">{brand} &middot; ₹{Number(price).toLocaleString()}</p>
+            <p className="text-xs font-medium leading-tight text-gray-900">{name}</p>
+            <p className="text-[10px] text-gray-500 leading-tight">{brand} &middot; ₹{Number(price).toLocaleString()}</p>
           </div>
         </div>
       );
