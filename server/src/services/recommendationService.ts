@@ -12,6 +12,55 @@ export interface Recommendation {
   reason: string;
 }
 
+const OCCASION_CATEGORIES: Record<string, string[]> = {
+  Wedding: ['Women', 'Men', 'Footwear', 'Accessories'],
+  Party: ['Women', 'Men', 'Footwear', 'Accessories', 'Beauty'],
+  Trip: ['Men', 'Women', 'Footwear', 'Accessories', 'Beauty'],
+  College: ['Men', 'Women', 'Footwear', 'Accessories'],
+  Office: ['Men', 'Women', 'Accessories'],
+  Festival: ['Women', 'Men', 'Footwear', 'Accessories', 'Beauty'],
+  Birthday: ['Women', 'Men', 'Footwear', 'Accessories'],
+  Casual: ['Men', 'Women', 'Footwear', 'Accessories', 'Kids', 'GenZ'],
+  Date: ['Women', 'Men', 'Footwear', 'Accessories', 'Beauty'],
+  Vacation: ['Footwear', 'Women', 'Men', 'Accessories', 'Beauty', 'Kids'],
+};
+
+const CATEGORY_KEYWORDS: Record<string, string[]> = {
+  Women: ['women', 'girl', 'female', 'dress', 'skirt', 'top', 'blouse', 'saree', 'salwar'],
+  Men: ['men', 'guy', 'male', 'shirt', 'trouser', 'pant', 'blazer', 'suit'],
+  Footwear: ['shoe', 'sneaker', 'boot', 'sandal', 'heel', 'loafer', 'footwear'],
+  Accessories: ['accessor', 'bag', 'watch', 'belt', 'sunglass', 'jewelry', 'necklace'],
+  Beauty: ['beauty', 'makeup', 'skincare', 'perfume', 'cosmetic'],
+  Kids: ['kids', 'child', 'baby', 'toddler'],
+  GenZ: ['genz', 'streetwear', 'hoodie', 'jogger', 'trendy'],
+};
+
+function extractChatCategories(userId: string): Map<string, number> {
+  const chatMessages = db.prepare(`
+    SELECT m.content FROM messages m
+    JOIN room_members rm ON m.room_id = rm.room_id
+    JOIN rooms r ON m.room_id = r.id
+    WHERE rm.user_id = ? AND r.status = 'active' AND m.type = 'text'
+    ORDER BY m.created_at DESC LIMIT 100
+  `).all(userId) as { content: string }[];
+
+  const categoryScores = new Map<string, number>();
+
+  for (const msg of chatMessages) {
+    const content = msg.content.toLowerCase();
+    for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
+      for (const kw of keywords) {
+        if (content.includes(kw)) {
+          categoryScores.set(category, (categoryScores.get(category) || 0) + 1);
+          break;
+        }
+      }
+    }
+  }
+
+  return categoryScores;
+}
+
 export function getRecommendations(userId: string, limit = 8): Recommendation[] {
   const userRooms = db.prepare(`
     SELECT DISTINCT r.id, r.occasion
@@ -35,42 +84,37 @@ export function getRecommendations(userId: string, limit = 8): Recommendation[] 
     WHERE rm.user_id = ?
   `).all(userId).map((r: any) => r.product_id);
 
+  const chatCategoryScores = extractChatCategories(userId);
+
   let products: any[] = [];
 
   if (occasion) {
-    const occasionCategories: Record<string, string[]> = {
-      Wedding: ['Women', 'Men', 'Footwear'],
-      Party: ['Women', 'Men', 'Footwear'],
-      Trip: ['Men', 'Women', 'Footwear'],
-      College: ['Men', 'Women'],
-      Office: ['Men', 'Women'],
-      Festival: ['Women', 'Men', 'Footwear'],
-      Birthday: ['Women', 'Men', 'Footwear'],
-      Casual: ['Men', 'Women', 'Footwear'],
-      Date: ['Women', 'Men'],
-      Vacation: ['Footwear', 'Men', 'Women'],
-    };
+    const baseCategories = OCCASION_CATEGORIES[occasion] || ['Men', 'Women', 'Footwear'];
 
-    const categories = occasionCategories[occasion] || ['Men', 'Women', 'Footwear'];
+    const sortedCategories = [...baseCategories].sort((a, b) => {
+      const scoreA = chatCategoryScores.get(a) || 0;
+      const scoreB = chatCategoryScores.get(b) || 0;
+      return scoreB - scoreA;
+    });
 
-    const placeholders = cartProductIds.map(() => '?').join(',');
+    const placeholders = sortedCategories.map(() => '?').join(',');
     let query = `
       SELECT * FROM products
-      WHERE category IN (${categories.map(() => '?').join(',')})
+      WHERE category IN (${placeholders})
       AND in_stock = 1
     `;
-    const params: any[] = [...categories];
+    const params: any[] = [...sortedCategories];
 
     if (cartProductIds.length > 0) {
-      query += ` AND id NOT IN (${placeholders})`;
+      const cartPlaceholders = cartProductIds.map(() => '?').join(',');
+      query += ` AND id NOT IN (${cartPlaceholders})`;
       params.push(...cartProductIds);
     }
 
     query += ' ORDER BY rating DESC LIMIT ?';
     params.push(String(limit));
 
-    const stmt = db.prepare(query);
-    products = stmt.all(...(params as [string])) as any[];
+    products = db.prepare(query).all(...(params as [string])) as any[];
   }
 
   if (products.length === 0) {

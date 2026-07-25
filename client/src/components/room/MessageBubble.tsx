@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import type { Message } from '../../types';
 
@@ -5,7 +6,22 @@ interface MessageBubbleProps {
   message: Message;
 }
 
-function renderContent(content: string, isOwn: boolean) {
+function ProductLink({ text, productId }: { text: string; productId: string }) {
+  const navigate = useNavigate();
+  return (
+    <button
+      onClick={() => navigate(`/products/${productId}`)}
+      className="inline-flex items-center gap-1 text-pink-600 font-semibold hover:text-pink-700 underline underline-offset-2 transition-colors"
+    >
+      {text}
+      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+      </svg>
+    </button>
+  );
+}
+
+function MessageContent({ content, isOwn }: { content: string; isOwn: boolean }) {
   let text = content;
   let productRef: { id: string; name: string; brand: string; price: number; image: string } | null = null;
 
@@ -18,6 +34,17 @@ function renderContent(content: string, isOwn: boolean) {
       productRef = { id: parts[0], name: parts[1], brand: parts[2], price: Number(parts[3]), image: parts.slice(4).join('|') };
     }
   }
+
+  const renderText = (t: string) => {
+    const segments = t.split(/(→\[[^\]]+\]\([^)]+\)←)/g);
+    return segments.map((seg, i) => {
+      const linkMatch = seg.match(/^→\[([^\]]+)\]\(([^)]+)\)←$/);
+      if (linkMatch) {
+        return <ProductLink key={i} text={linkMatch[1]} productId={linkMatch[2]} />;
+      }
+      return seg || null;
+    });
+  };
 
   return (
     <>
@@ -38,7 +65,7 @@ function renderContent(content: string, isOwn: boolean) {
           </div>
         </div>
       )}
-      {text && <span>{text}</span>}
+      {text && <span>{renderText(text)}</span>}
     </>
   );
 }
@@ -69,7 +96,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
             </span>
           </div>
           <div className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-purple-50 to-pink-50 border border-pink-200 text-sm text-gray-900 leading-relaxed rounded-tl-sm">
-            {renderContent(message.content, false)}
+            <MessageContent content={message.content} isOwn={false} />
           </div>
         </div>
       </div>
@@ -103,7 +130,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
             ? 'bg-pink-500 text-white rounded-tr-sm'
             : 'bg-white border border-gray-200 text-gray-900 rounded-tl-sm'
         }`}>
-          {renderContent(message.content, isOwn)}
+          <MessageContent content={message.content} isOwn={isOwn} />
         </div>
       </div>
     </div>
