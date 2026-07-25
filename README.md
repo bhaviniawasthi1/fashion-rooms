@@ -60,7 +60,7 @@ Online shopping is inherently solitary. Friends and family browsing the same pro
 
 **Fashion Rooms** transforms shopping from a solo activity into a shared, social experience. Users create or join rooms with friends, browse products together, add items to a shared cart, vote on what to buy, chat in real time, and earn rewards when the group commits to a purchase.
 
-At the heart of the experience is **@Maya**, an AI stylist integrated directly into room conversations who provides personalized fashion advice, trend insights, and purchase recommendations.
+At the heart of the experience is **@Maya**, an AI stylist integrated directly into room conversations who analyzes full chat history, searches the product catalog, and returns personalized fashion advice with clickable product links.
 
 ---
 
@@ -73,7 +73,13 @@ Create invite-only shopping rooms with friends. Browse the catalog and add produ
 Vote thumbs up or down on each product in the room cart. Cast preferences on color and size. See live tallies so the group knows exactly what everyone wants.
 
 ### 💬 Real-Time Chat with AI Stylist
-Persistent room chat powered by Socket.IO with typing indicators, online presence, and message history. **@Maya** — the AI fashion stylist — answers style questions, recommends outfits, and helps the group decide.
+Persistent room chat powered by Socket.IO with typing indicators, online presence, and message history. **@Maya** — the AI fashion stylist — answers style questions, helps the group decide, analyzes 50+ messages of chat history, searches the full product catalog, and returns recommendations with **clickable product links**.
+
+### 📎 Product Reference in Chat
+Tag any product from the shared cart while chatting — a WhatsApp-style reply bar appears above your message showing the product thumbnail, name, brand, and price. Everyone knows exactly which product is being discussed.
+
+### 📋 Activity Feed
+Real-time timeline of all room events — purchases, votes, member joins, cart additions — streamed live via WebSocket without page refresh.
 
 ### 🪙 MynCoins Rewards
 When 75% or more of room members purchase an item, everyone earns MynCoins (10 MynCoins = ₹1). Coins are credited automatically and expire after 2 months, incentivizing timely group purchases.
@@ -262,6 +268,11 @@ Visit **http://localhost:3001** in production mode.
 |--------|----------|-------------|
 | `GET` | `/api/myncoins` | Get coin balance and history |
 | `GET` | `/api/orders` | Get all orders (room + personal) |
+
+### Activity Feed
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/rooms/:id/activities` | Get room activity feed |
 
 ### Analytics
 | Method | Endpoint | Description |
