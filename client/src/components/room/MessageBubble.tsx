@@ -5,6 +5,32 @@ interface MessageBubbleProps {
   message: Message;
 }
 
+function renderContent(content: string) {
+  const parts = content.split(/(@@[^@]+@@)/g);
+  return parts.map((part, i) => {
+    const match = part.match(/^@@([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|([^@]+)@@$/);
+    if (match) {
+      const [, id, name, brand, price, image] = match;
+      return (
+        <div key={i} className="inline-flex items-center gap-2 bg-gray-50 rounded-lg px-2 py-1.5 my-0.5 border border-gray-200/60">
+          <img
+            src={image}
+            alt={name}
+            className="w-8 h-8 rounded object-cover shrink-0 bg-gray-100"
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+          />
+          <div>
+            <p className="text-xs font-medium leading-tight">{name}</p>
+            <p className="text-[10px] opacity-70 leading-tight">{brand} &middot; ₹{Number(price).toLocaleString()}</p>
+          </div>
+        </div>
+      );
+    }
+    if (!part) return null;
+    return <span key={i}>{part}</span>;
+  });
+}
+
 export default function MessageBubble({ message }: MessageBubbleProps) {
   const { user } = useAuth();
   const isOwn = message.user?.id === user?.id;
@@ -31,7 +57,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
             </span>
           </div>
           <div className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-purple-50 to-pink-50 border border-pink-200 text-sm text-gray-900 leading-relaxed rounded-tl-sm">
-            {message.content}
+            {renderContent(message.content)}
           </div>
         </div>
       </div>
@@ -65,7 +91,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
             ? 'bg-pink-500 text-white rounded-tr-sm'
             : 'bg-white border border-gray-200 text-gray-900 rounded-tl-sm'
         }`}>
-          {message.content}
+          {renderContent(message.content)}
         </div>
       </div>
     </div>

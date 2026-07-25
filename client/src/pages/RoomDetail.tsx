@@ -209,7 +209,7 @@ export default function RoomDetail() {
               </div>
             </div>
             <div className="max-w-2xl mx-auto">
-              <MessageInput onSend={sendMessage} onTypingStart={startTyping} onTypingStop={stopTyping} />
+              <MessageInput roomId={id!} onSend={sendMessage} onTypingStart={startTyping} onTypingStop={stopTyping} />
             </div>
           </div>
         )}
