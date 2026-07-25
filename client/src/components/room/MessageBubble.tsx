@@ -6,29 +6,41 @@ interface MessageBubbleProps {
 }
 
 function renderContent(content: string) {
-  const parts = content.split(/(@@[^@]+@@)/g);
-  return parts.map((part, i) => {
-    const match = part.match(/^@@([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|([^@]+)@@$/);
-    if (match) {
-      const [, id, name, brand, price, image] = match;
-      return (
-        <div key={i} className="inline-flex items-center gap-2 bg-gray-50 rounded-lg px-2 py-1.5 my-0.5 border border-gray-200/60">
-          <img
-            src={image}
-            alt={name}
-            className="w-8 h-8 rounded object-cover shrink-0 bg-gray-100"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-          />
-          <div>
-            <p className="text-xs font-medium leading-tight text-gray-900">{name}</p>
-            <p className="text-[10px] text-gray-500 leading-tight">{brand} &middot; ₹{Number(price).toLocaleString()}</p>
+  let text = content;
+  let productRef: { id: string; name: string; brand: string; price: number; image: string } | null = null;
+
+  const refIdx = content.indexOf(' ‣‣');
+  if (refIdx !== -1) {
+    text = content.slice(0, refIdx);
+    const raw = content.slice(refIdx + 4);
+    const parts = raw.split('|');
+    if (parts.length >= 5) {
+      productRef = { id: parts[0], name: parts[1], brand: parts[2], price: Number(parts[3]), image: parts.slice(4).join('|') };
+    }
+  }
+
+  return (
+    <>
+      {productRef && (
+        <div className="flex items-stretch gap-3 mb-1.5 pl-1">
+          <div className="w-1 shrink-0 bg-pink-400 rounded-full" />
+          <div className="flex items-center gap-2.5 min-w-0">
+            <img
+              src={productRef.image}
+              alt={productRef.name}
+              className="w-9 h-9 rounded-lg object-cover shrink-0 bg-gray-100"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            />
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-gray-900 leading-tight truncate">{productRef.name}</p>
+              <p className="text-[11px] text-gray-500 leading-tight">{productRef.brand} &middot; ₹{productRef.price.toLocaleString()}</p>
+            </div>
           </div>
         </div>
-      );
-    }
-    if (!part) return null;
-    return <span key={i}>{part}</span>;
-  });
+      )}
+      {text && <span>{text}</span>}
+    </>
+  );
 }
 
 export default function MessageBubble({ message }: MessageBubbleProps) {

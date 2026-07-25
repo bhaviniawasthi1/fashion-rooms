@@ -28,16 +28,17 @@ export default function MessageInput({ roomId, onSend, onTypingStart, onTypingSt
   const [showProductPicker, setShowProductPicker] = useState(false);
   const [cartItems, setCartItems] = useState<ProductRefItem[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
+  const [productRef, setProductRef] = useState<{ id: string; name: string; brand: string; price: number; image: string } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const emojiRef = useRef<HTMLDivElement>(null);
-  const productRef = useRef<HTMLDivElement>(null);
+  const productRefEl = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (emojiRef.current && !emojiRef.current.contains(e.target as Node)) {
         setShowEmoji(false);
       }
-      if (productRef.current && !productRef.current.contains(e.target as Node)) {
+      if (productRefEl.current && !productRefEl.current.contains(e.target as Node)) {
         setShowProductPicker(false);
       }
     };
@@ -47,14 +48,19 @@ export default function MessageInput({ roomId, onSend, onTypingStart, onTypingSt
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
-    if (!content.trim()) return;
-    onSend(content);
+    if (!content.trim() && !productRef) return;
+    let finalContent = content.trim();
+    if (productRef) {
+      finalContent = `${finalContent} ‣‣${productRef.id}|${productRef.name}|${productRef.brand}|${productRef.price}|${productRef.image}`;
+    }
+    onSend(finalContent);
     setContent('');
+    setProductRef(null);
     onTypingStop();
     setShowEmoji(false);
     setShowProductPicker(false);
     inputRef.current?.focus();
-  }, [content, onSend, onTypingStop]);
+  }, [content, productRef, onSend, onTypingStop]);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setContent(e.target.value);
@@ -88,29 +94,38 @@ export default function MessageInput({ roomId, onSend, onTypingStart, onTypingSt
     }
   }, [roomId, cartItems]);
 
-  const insertProductRef = useCallback((item: ProductRefItem) => {
+  const selectProduct = useCallback((item: ProductRefItem) => {
     const p = item.product;
-    const ref = `@@${p.id}|${p.name}|${p.brand}|${p.price}|${p.image}@@`;
-    const input = inputRef.current;
-    if (input) {
-      const start = input.selectionStart ?? content.length;
-      const end = input.selectionEnd ?? content.length;
-      const next = content.slice(0, start) + ref + content.slice(end);
-      setContent(next);
-      requestAnimationFrame(() => {
-        input.focus();
-        const pos = start + ref.length;
-        input.selectionStart = input.selectionEnd = pos;
-      });
-    } else {
-      setContent((prev) => prev + ref);
-    }
+    setProductRef({ id: p.id, name: p.name, brand: p.brand, price: p.price, image: p.image });
     setShowProductPicker(false);
-    onTypingStart();
-  }, [content, onTypingStart]);
+    inputRef.current?.focus();
+  }, []);
 
   return (
     <div className="border-t border-gray-200 bg-white px-4 py-3">
+      {productRef && (
+        <div className="flex items-center gap-3 mb-2 px-3 py-2 bg-pink-50 rounded-xl border-l-4 border-pink-400">
+          <img
+            src={productRef.image}
+            alt={productRef.name}
+            className="w-10 h-10 rounded-lg object-cover shrink-0 bg-gray-100"
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+          />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-gray-900 truncate">{productRef.name}</p>
+            <p className="text-xs text-gray-500">{productRef.brand} &middot; ₹{productRef.price.toLocaleString()}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setProductRef(null)}
+            className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="flex items-center gap-2">
         <div className="relative">
           <button
@@ -124,7 +139,7 @@ export default function MessageInput({ roomId, onSend, onTypingStart, onTypingSt
             </svg>
           </button>
           {showProductPicker && (
-            <div ref={productRef} className="absolute bottom-10 left-0 bg-white rounded-xl shadow-xl border border-gray-200 p-3 w-72 z-50">
+            <div ref={productRefEl} className="absolute bottom-10 left-0 bg-white rounded-xl shadow-xl border border-gray-200 p-3 w-72 z-50">
               <p className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Tag a product</p>
               {loadingProducts ? (
                 <div className="flex items-center justify-center py-6">
@@ -138,7 +153,7 @@ export default function MessageInput({ roomId, onSend, onTypingStart, onTypingSt
                     <button
                       key={item.id}
                       type="button"
-                      onClick={() => insertProductRef(item)}
+                      onClick={() => selectProduct(item)}
                       className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-pink-50 transition-colors text-left"
                     >
                       <img
@@ -190,13 +205,13 @@ export default function MessageInput({ roomId, onSend, onTypingStart, onTypingSt
           type="text"
           value={content}
           onChange={handleChange}
-          placeholder="Type a message..."
+          placeholder={productRef ? 'Add a comment...' : 'Type a message...'}
           className="flex-1 px-4 py-2.5 bg-gray-100 rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-500 transition-all"
           maxLength={1000}
         />
         <button
           type="submit"
-          disabled={!content.trim()}
+          disabled={!content.trim() && !productRef}
           className="bg-pink-500 text-white p-2.5 rounded-xl disabled:opacity-40 hover:opacity-90 transition-all"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
