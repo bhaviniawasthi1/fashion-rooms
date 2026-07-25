@@ -147,7 +147,7 @@ export default function RoomDetail() {
               </svg>
             ) : (
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4l5 5M20 4l-5 5M4 20l5-5M20 20l-5-5" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5 L10 10 M8 11 L10 10 L11 8 M19 5 L14 10 M16 11 L14 10 L13 8 M5 19 L10 14 M8 13 L10 14 L11 16 M19 19 L14 14 M16 13 L14 14 L13 16" />
               </svg>
             )}
           </button>
