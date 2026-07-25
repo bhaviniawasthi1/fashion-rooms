@@ -22,7 +22,7 @@ function renderContent(content: string, isOwn: boolean) {
   return (
     <>
       {productRef && (
-        <div className={`flex items-stretch gap-2.5 mb-1.5 p-1.5 -mx-1 rounded-lg ${isOwn ? 'bg-pink-400/20' : 'bg-gray-50'}`}>
+        <div className={`flex items-stretch gap-2.5 mb-1.5 p-1.5 -mx-1 rounded-lg ${isOwn ? 'bg-white/20' : 'bg-gray-50'}`}>
           <div className={`w-0.5 shrink-0 rounded-full ${isOwn ? 'bg-white/60' : 'bg-gray-300'}`} />
           <div className="flex items-center gap-2 min-w-0">
             <img
