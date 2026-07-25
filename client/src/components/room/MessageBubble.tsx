@@ -5,7 +5,7 @@ interface MessageBubbleProps {
   message: Message;
 }
 
-function renderContent(content: string) {
+function renderContent(content: string, isOwn: boolean) {
   let text = content;
   let productRef: { id: string; name: string; brand: string; price: number; image: string } | null = null;
 
@@ -22,18 +22,18 @@ function renderContent(content: string) {
   return (
     <>
       {productRef && (
-        <div className="flex items-stretch gap-3 mb-1.5 pl-1">
-          <div className="w-1 shrink-0 bg-pink-400 rounded-full" />
-          <div className="flex items-center gap-2.5 min-w-0">
+        <div className={`flex items-stretch gap-2.5 mb-1.5 ${isOwn ? 'opacity-90' : ''}`}>
+          <div className={`w-0.5 shrink-0 rounded-full ${isOwn ? 'bg-white/60' : 'bg-gray-300'}`} />
+          <div className="flex items-center gap-2 min-w-0">
             <img
               src={productRef.image}
               alt={productRef.name}
-              className="w-9 h-9 rounded-lg object-cover shrink-0 bg-gray-100"
+              className="w-8 h-8 rounded object-cover shrink-0 bg-gray-100"
               onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
             />
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-gray-900 leading-tight truncate">{productRef.name}</p>
-              <p className="text-[11px] text-gray-500 leading-tight">{productRef.brand} &middot; ₹{productRef.price.toLocaleString()}</p>
+              <p className={`text-xs font-semibold leading-tight truncate ${isOwn ? 'text-white/90' : 'text-gray-800'}`}>{productRef.name}</p>
+              <p className={`text-[11px] leading-tight ${isOwn ? 'text-white/60' : 'text-gray-400'}`}>{productRef.brand} &middot; ₹{productRef.price.toLocaleString()}</p>
             </div>
           </div>
         </div>
@@ -69,7 +69,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
             </span>
           </div>
           <div className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-purple-50 to-pink-50 border border-pink-200 text-sm text-gray-900 leading-relaxed rounded-tl-sm">
-            {renderContent(message.content)}
+            {renderContent(message.content, false)}
           </div>
         </div>
       </div>
@@ -103,7 +103,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
             ? 'bg-pink-500 text-white rounded-tr-sm'
             : 'bg-white border border-gray-200 text-gray-900 rounded-tl-sm'
         }`}>
-          {renderContent(message.content)}
+          {renderContent(message.content, isOwn)}
         </div>
       </div>
     </div>
