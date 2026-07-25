@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
@@ -5,7 +6,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
 import { Server } from 'socket.io';
-import dotenv from 'dotenv';
 import { initializeDatabase } from './db/index.js';
 import authRouter from './routes/auth.js';
 import productRouter, { seedProducts } from './routes/products.js';
@@ -18,8 +18,6 @@ import recommendationRouter from './routes/recommendations.js';
 import checkoutRouter, { mynCoinsRouter } from './routes/checkout.js';
 import ordersRouter from './routes/orders.js';
 import { setupSocketHandlers } from './socket/index.js';
-
-dotenv.config();
 
 const app = express();
 const httpServer = createServer(app);
