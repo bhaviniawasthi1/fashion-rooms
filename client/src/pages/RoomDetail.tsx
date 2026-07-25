@@ -31,7 +31,10 @@ const occasionStyles: Record<string, { bg: string }> = {
   Vacation:   { bg: 'bg-[#e8eaf6]' },
 };
 
-const CHAT_PATTERN = `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`;
+const chatBgStyle: React.CSSProperties = {
+  backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.07) 1.5px, transparent 1.5px)',
+  backgroundSize: '24px 24px',
+};
 
 export default function RoomDetail() {
   const { id } = useParams<{ id: string }>();
@@ -144,7 +147,7 @@ export default function RoomDetail() {
               </svg>
             ) : (
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             )}
           </button>
@@ -177,7 +180,7 @@ export default function RoomDetail() {
           <div className={`flex-1 flex flex-col min-w-0 ${occasionStyles[room.occasion]?.bg || 'bg-gray-50'}`}>
             <div
               className="flex-1 overflow-y-auto px-3 py-3"
-              style={{ backgroundImage: CHAT_PATTERN }}
+              style={chatBgStyle}
             >
               <div className="max-w-2xl mx-auto space-y-1">
                 {messagesLoading ? (
