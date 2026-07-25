@@ -38,7 +38,7 @@ router.post('/:roomId/checkout', authenticateToken, (req: AuthRequest, res: Resp
   if (result.coins_awarded > 0) {
     msgContent = `🎉 BOOM! ${result.purchasers_count}/${result.total_members} purchased = MynCoins UNLOCKED for everyone who copped! Check your rewards besties! 💰✨`;
   } else if (remainingNeeded > 0) {
-    msgContent = `🙌 ${req.userName} just copped! Only ${remainingNeeded} more needed for squad MynCoins rewards! Who's next? ⏳`;
+    msgContent = `🙌 ${req.userName} just copped! ${remainingNeeded} more to go — rewards unlock when ${thresholdNeeded} of ${result.total_members} members buy! Who's next? ⏳`;
   } else {
     msgContent = `🔥 ${req.userName} just copped! Squad rewards already unlocked — let's keep the party going! 🚀`;
   }
