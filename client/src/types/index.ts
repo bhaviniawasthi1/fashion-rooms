@@ -63,6 +63,7 @@ export interface Activity {
   action_type: string;
   user?: { id: string; name: string };
   created_at: string;
+  data?: Record<string, any>;
 }
 
 export interface RoomMember {
