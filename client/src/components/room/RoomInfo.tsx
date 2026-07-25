@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../lib/api';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import ConfirmModal from '../ConfirmModal';
 import type { Room } from '../../types';
 
 interface RoomInfoProps {
@@ -21,11 +22,12 @@ export default function RoomInfo({ room, onRoomUpdated: _onRoomUpdated }: RoomIn
   const { showToast } = useToast();
   const [exiting, setExiting] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const daysLeft = Math.max(0, Math.ceil((new Date(room.expires_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
   const isExpired = room.status === 'expired';
 
   const handleLeave = async () => {
-    if (!confirm('Are you sure you want to leave this room?')) return;
     setExiting(true);
     try {
       await api.post(`/rooms/${room.id}/leave`);
@@ -35,11 +37,11 @@ export default function RoomInfo({ room, onRoomUpdated: _onRoomUpdated }: RoomIn
       showToast('Failed to leave room', 'error');
     } finally {
       setExiting(false);
+      setShowLeaveConfirm(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this room? This cannot be undone.')) return;
     setDeleting(true);
     try {
       await api.delete(`/rooms/${room.id}`);
@@ -49,6 +51,7 @@ export default function RoomInfo({ room, onRoomUpdated: _onRoomUpdated }: RoomIn
       showToast('Failed to delete room', 'error');
     } finally {
       setDeleting(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -87,7 +90,7 @@ export default function RoomInfo({ room, onRoomUpdated: _onRoomUpdated }: RoomIn
         <div className="mt-4 space-y-2">
           {room.is_owner ? (
             <button
-              onClick={handleDelete}
+              onClick={() => setShowDeleteConfirm(true)}
               disabled={deleting}
               className="w-full py-2 bg-red-500/10 text-red-400 rounded-lg text-sm font-medium hover:bg-red-500/20 transition-colors disabled:opacity-50"
             >
@@ -95,7 +98,7 @@ export default function RoomInfo({ room, onRoomUpdated: _onRoomUpdated }: RoomIn
             </button>
           ) : (
             <button
-              onClick={handleLeave}
+              onClick={() => setShowLeaveConfirm(true)}
               disabled={exiting}
               className="w-full py-2 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors disabled:opacity-50"
             >
@@ -104,6 +107,28 @@ export default function RoomInfo({ room, onRoomUpdated: _onRoomUpdated }: RoomIn
           )}
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={showLeaveConfirm}
+        title="Leave Room?"
+        message="Are you sure you want to leave this room? You'll need a new invite to rejoin."
+        confirmLabel="Leave"
+        danger={false}
+        onConfirm={handleLeave}
+        onCancel={() => setShowLeaveConfirm(false)}
+        loading={exiting}
+      />
+
+      <ConfirmModal
+        isOpen={showDeleteConfirm}
+        title="Delete Room?"
+        message="Are you sure you want to delete this room? This action cannot be undone."
+        confirmLabel="Delete"
+        danger
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+        loading={deleting}
+      />
     </div>
   );
 }
