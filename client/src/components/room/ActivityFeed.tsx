@@ -12,7 +12,7 @@ const actionLabels: Record<string, string> = {
   product_removed: 'removed a product',
   vote_cast: 'voted',
   ai_suggestion: 'AI suggested',
-  checkout_completed: 'completed checkout',
+  checkout_completed: 'just copped an item! 🛍️',
   room_expired: 'room ended',
   message_sent: 'sent a message',
 };
@@ -61,12 +61,21 @@ export default function ActivityFeed({ roomId }: ActivityFeedProps) {
                     </div>
                   </div>
                   <div className="flex-1 min-w-0 pt-0.5">
-                    <p className="text-xs text-gray-600">
-                      {activity.user && (
-                        <span className="font-semibold text-gray-900">{activity.user.name} </span>
-                      )}
-                      <span className="text-gray-600">{actionLabels[activity.action_type] || activity.action_type}</span>
-                    </p>
+                      <p className="text-xs text-gray-600">
+                        {activity.user && (
+                          <span className="font-semibold text-gray-900">{activity.user.name} </span>
+                        )}
+                        {activity.action_type === 'checkout_completed' ? (
+                          <span>
+                            just copped an item!
+                            {activity.data?.purchasers_count != null && activity.data?.total_members != null && (
+                              <span className="text-pink-500"> {activity.data.purchasers_count}/{activity.data.total_members} purchased</span>
+                            )}
+                          </span>
+                        ) : (
+                          <span className="text-gray-600">{actionLabels[activity.action_type] || activity.action_type}</span>
+                        )}
+                      </p>
                     <p className="text-[10px] text-gray-400 mt-0.5">
                       {new Date(activity.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>

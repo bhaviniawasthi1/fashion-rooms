@@ -5,6 +5,8 @@ export interface CheckoutResult {
   purchased: boolean;
   room_purchase_percentage: number;
   coins_awarded: number;
+  purchasers_count: number;
+  total_members: number;
 }
 
 export function purchaseItem(roomId: string, productId: string, userId: string): CheckoutResult {
@@ -52,6 +54,8 @@ export function purchaseItem(roomId: string, productId: string, userId: string):
     purchased: true,
     room_purchase_percentage: percentage,
     coins_awarded: coinsAwarded,
+    purchasers_count: purchasers.c,
+    total_members: totalMembers,
   };
 }
 
